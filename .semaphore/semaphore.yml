@@ -37,7 +37,35 @@ global_job_config:
       - apt-get install -y zip unzip nodejs npm
       - docker-php-ext-install pdo pdo_pgsql zip gd mbstring
       - 'curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer'
-      - cp .env.example .env
+      - |
+        if [ -f ".env.example" ]; then
+          cp .env.example .env
+        else
+          # Create a basic .env file with testing configuration
+          cat > .env << EOL
+        APP_NAME=Laravel
+        APP_ENV=testing
+        APP_KEY=
+        APP_DEBUG=true
+        APP_URL=http://localhost
+
+        DB_CONNECTION=pgsql
+        DB_HOST=postgres
+        DB_PORT=5432
+        DB_DATABASE=laravel_test
+        DB_USERNAME=laravel
+        DB_PASSWORD=password
+
+        CACHE_DRIVER=redis
+        QUEUE_CONNECTION=redis
+        SESSION_DRIVER=file
+        SESSION_LIFETIME=120
+
+        REDIS_HOST=redis
+        REDIS_PASSWORD=null
+        REDIS_PORT=6379
+        EOL
+        fi
       - 'php artisan key:generate'
       - cache restore composer-deps-$SEMAPHORE_GIT_BRANCH-$(checksum composer.lock)
       - cache restore npm-deps-$SEMAPHORE_GIT_BRANCH-$(checksum package-lock.json)
