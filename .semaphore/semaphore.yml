@@ -50,7 +50,7 @@ global_job_config:
     - name: DB_HOST
       value: postgres
     - name: DB_PORT
-      value: 5432
+      value: '5432'
     - name: DB_DATABASE
       value: laravel_test
     - name: DB_USERNAME
